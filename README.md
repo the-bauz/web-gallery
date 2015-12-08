@@ -13,8 +13,8 @@ tbwg.init(selector);
 or optionally a function call with Options
 ```javascript
 tbwg.init(selector, {
-  option1: option1,
-  option2: option2
+  option1: 'option1',
+  option2: 'option2'
 });
 ```
 
@@ -24,11 +24,14 @@ First you need to check your HTML Strukture because it need to fit in the Two de
 
 ### Text type
 ```html
-<ul>
+<ul id="tbwgItem">
   <li>
     <p>YOUR TEXT</p>
   </li>
 </ul>
+<script>
+tbwg.init('#tbwgItem');
+</script>
 ```  
 or some Variation of that pattern.
 _Important is that the Text is wrapped in the paragraph-tag_
@@ -36,11 +39,14 @@ _Important is that the Text is wrapped in the paragraph-tag_
 
 ### Image type
 ```html
-<ul>
+<ul id="tbwgItem">
   <li>
-    <img src="assets/img/350x350.png" alt="IMAGE" />
+    <img src="assets/img/350x350.png" alt="SOME IMAGE" />
   </li>
 </ul>
+<script>
+tbwg.init('#tbwgItem');
+</script>
 ```  
 or some Variation of that pattern.
 _Important is that the Image you want to display is the first image in an Image-tag_
