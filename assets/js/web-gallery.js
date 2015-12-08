@@ -9,15 +9,27 @@ var tbwg = {
     } else if(typeof options != 'undefined' && typeof options != 'object'){
       console.info('The Options for the Web Gallery from the-bauz need to be an Javascript object');
     } else if(typeof options != 'undefined'){
-      this.selector = selector;
+      this.setSelector(selector);
       this.setOptions(options);
     } else {
-      this.selector = selector;
+      this.setSelector(selector);
     }
     return this;
   },
   setOptions: function(options){
     this.options = options;
+    return this;
+  },
+  setSelector: function(selector){
+    var jQselect = jQuery(selector);
+    if(jQselect.length != 1){
+      console.info('The Selector for the Web Gallery from the-bauz needs to be uniqe');
+      return this;
+    } else if(this.selector){
+      this.selector.removeClass('tb-web-gallery');
+    }
+    jQselect.addClass('tb-web-gallery');
+    this.selector = jQselect;
     return this;
   }
 };
