@@ -6,50 +6,50 @@
   <script src="https://code.jquery.com/jquery-2.1.4.min.js" type="text/javascript"></script>
 
   <!-- Styles -->
+  <link href='assets/css/page-style.css' rel='stylesheet' type='text/css'>
   <link href='assets/css/web-gallery.css' rel='stylesheet' type='text/css'>
 
 </head>
 <body>
-
-  <ul id="mainGallery">
-    <li class="image-type">
-      <img src="assets/img/350x350.png" alt="IMAGE" />
-    </li>
-    <li class="image-type">
-      <img src="assets/img/750x1500.png" alt="IMAGE" />
-    </li>
-    <li class="image-type">
-      <img src="assets/img/350x350.png" alt="IMAGE" />
-    </li>
-    <li class="text-type">
-      <div>
-        <p>This is another just a Quote</p>
-      </div>
-    </li>
-    <li class="image-type">
-      <div>
+  <div class="page-content">
+    <ul id="mainGallery">
+      <li class="image-type">
+      </li>
+      <li class="image-type">
+        <img src="assets/img/750x1500.png" alt="IMAGE" />
+      </li>
+      <li class="image-type">
+        <img src="assets/img/350x350.png" alt="IMAGE" />
+      </li>
+      <li class="text-type">
         <div>
-          <img src="assets/img/950x950.png" alt="IMAGE" />
-          <p>Description</p>
+          <p>This is another just a Quote</p>
         </div>
-      </div>
-    </li>
-    <li class="text-type">
-      <p>This is just a Quote</p>
-    </li>
-    <li class="image-type">
-      <div>
-        <img src="assets/img/1900x900.png" alt="IMAGE" />
-      </div>
-    </li>
-  </ul>
-
+      </li>
+      <li class="image-type">
+        <div>
+          <div>
+            <img src="assets/img/950x950.png" alt="IMAGE" />
+            <p>Description</p>
+          </div>
+        </div>
+      </li>
+      <li class="text-type">
+        <p>This is just a Quote</p>
+      </li>
+      <li class="image-type">
+        <div>
+          <img src="assets/img/1900x900.png" alt="IMAGE" />
+        </div>
+      </li>
+    </ul>
+  </div>
   <!-- Scripts -->
   <script src="assets/js/web-gallery.js" type="text/javascript"></script>
 
 
   <script>
-
+  tbwg.init('#mainGallery')
   </script>
 </body>
 </html>

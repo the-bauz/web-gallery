@@ -1,0 +1,30 @@
+.tb-web-gallery{
+  padding: 0;
+  list-style: none;
+}
+.tb-web-gallery:after{
+  content: '';
+  width: 100%;
+  display: block;
+  clear: both;
+}
+
+.tb-web-gallery[class^='tbwb-grid-1'] > *{
+  float: left;
+  box-sizing: border-box;
+}
+.tb-web-gallery.tbwb-grid-1 > *{
+  width: 100%;
+}
+.tb-web-gallery.tbwb-grid-2 > *{
+  width: 50%;
+}
+.tb-web-gallery.tbwb-grid-3 > *{
+  width: 33%;
+}
+
+
+/*IMAGE TYPE*/
+.tb-web-gallery img:first-of-type{
+
+}
