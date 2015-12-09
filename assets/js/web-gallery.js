@@ -51,8 +51,11 @@ var tbwg = {
   setChilds: function(){
     var childs = this.selector.children();
     childs.each(function(index){
-      if(jQuery(this).children().length < 1){
+      var chilchild = jQuery(this).children();
+      if(chilchild.length < 1){
         childs = childs.not(this);
+      } else {
+        chilchild.wrap( "<div class='tb-web-gallery-inner-wrap'></div>" );
       }
     });
     childs.addClass('tb-web-gallery-item');
