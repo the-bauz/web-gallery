@@ -1,4 +1,4 @@
-# web-gallery
+# web-gallery (IN DEVELOPMENT)
 A Free Web-Based Gallery made for you by [the-bauz](http://the-bauz.com).
 
 
