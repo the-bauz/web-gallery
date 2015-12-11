@@ -8,7 +8,8 @@ var tbwg = {
     }
   },
   callbacks:{
-    openItem: false
+    openItem: false,
+    closeItem: false
   },
   childs: false,
   init: function(selector){
@@ -33,6 +34,7 @@ var tbwg = {
     this.setChilds.apply(this);
     this.setUp.overlay.apply(this);
     this.events.openItem.apply(this);
+    this.events.closeItem.apply(this);
     return this;
   },
   on:{
@@ -53,6 +55,16 @@ var tbwg = {
           me.callbacks.openItem();
         }
       });
+    },
+    closeItem: function(){
+      jQuery('#tbwg-overlay').on('click', '#tbwgClose', { currentInstance: this }, function(event){
+        var me = event.data.currentInstance; //The Object in wich the event was triggert
+        jQuery('body').removeClass('tbwg-open');
+
+        if(me.callbacks.closeItem){
+          me.callbacks.closeItem();
+        }
+      });
     }
   },
   setUp:{
@@ -70,7 +82,7 @@ var tbwg = {
             context.childs.each(function(){
               allContent += jQuery(this).html();
             });
-            this.galleryContent = jQuery('<div id="tbwg-overlay"><div class="tbwg-dimmer"></div><div class="tbwg-content"><div class="tbwg-id-'+randomString+'">'+allContent+'</div></div></div>');
+            this.galleryContent = jQuery('<div id="tbwg-overlay"><div class="tbwg-dimmer"></div><div class="tbwg-content"><span id="tbwgClose">x</span><div class="tbwg-id-'+randomString+'">'+allContent+'</div></div></div>');
             jQuery('body').append(this.galleryContent);
           } else {
             setTimeout(context.setUp.overlay(), 100);
