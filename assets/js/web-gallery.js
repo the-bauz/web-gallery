@@ -4,13 +4,17 @@ var tbwg = {
   options: {
     gridSize: 3,
     breakpoints: {
-      420: 1
+      420: 1,
+      640: 2,
+      900: 3
     }
   },
   callbacks:{
     openItem: false,
-    closeItem: false
+    closeItem: false,
+    gridResize: false
   },
+  lastResize: -1,
   childs: false,
   init: function(selector){
     if(typeof selector == 'undefined'){
@@ -29,18 +33,29 @@ var tbwg = {
       this.setSelector.call(this, selector);
     }
     //SET GRID SIZE VIA CSS
-    this.setGridSize.apply(this);
+    this.setGridSize.call(this, 3); //JUST FOR TESTING TODO MAKE DYNAMIC
 
     this.setChilds.apply(this);
     this.setUp.overlay.apply(this);
     this.events.openItem.apply(this);
     this.events.closeItem.apply(this);
+    this.events.gridResize.apply(this);
     return this;
   },
   on:{
     openItem:function(callback){
       if(typeof callback != 'function'){
         this.callbacks.openItem = callback;
+      }
+    },
+    closeItem: function(callback){
+      if(typeof callback != 'function'){
+        this.callbacks.closeItem = callback;
+      }
+    },
+    gridResize:function(callback){
+      if(typeof callback != 'function'){
+        this.callbacks.gridResize = callback;
       }
     }
   },
@@ -65,6 +80,46 @@ var tbwg = {
           me.callbacks.closeItem();
         }
       });
+    },
+    gridResize: function(){
+      if(this.helper.countObj(this.options.breakpoints) > 0){
+        var keys = [],
+            k, len;
+
+        for (k in this.options.breakpoints) {
+          if (this.options.breakpoints.hasOwnProperty(k)) {
+            keys.push(k);
+          }
+        }
+
+        keys.sort();
+
+        len = keys.length;
+        jQuery(window).resize({ currentInstance: this, sortedBP: keys },function(event){
+          var me = event.data.currentInstance, //The Object in wich the event was triggert
+              sBP = event.data.sortedBP, //sorted Break Points
+              newWidth = jQuery(this).width();
+
+          for(var i = 0; i < sBP.length; i++){
+            if(i == 0){
+              if(newWidth <= sBP[0] && me.lastResize > sBP[0] || newWidth <= sBP[0] && me.lastResize == -1){
+                me.setGridSize.call(me, me.options.breakpoints[sBP[0]]);
+                if(me.callbacks.gridResize){
+                  me.callbacks.gridResize();
+                }
+              }
+            } else {
+              if (newWidth <= sBP[i] && me.lastResize > sBP[i] || newWidth > sBP[i-1] && me.lastResize <= sBP[i-1]) {
+                me.setGridSize.call(me, me.options.breakpoints[sBP[i]]);
+                if(me.callbacks.gridResize){
+                  me.callbacks.gridResize();
+                }
+              }
+            }
+          }
+          me.lastResize = newWidth;
+        });
+      }
     }
   },
   setUp:{
@@ -101,6 +156,13 @@ var tbwg = {
           text += possible.charAt(Math.floor(Math.random() * possible.length));
 
       return text;
+    },
+    countObj: function(obj){
+      var size = 0, key;
+      for (key in obj) {
+          if (obj.hasOwnProperty(key)) size++;
+      }
+      return size;
     }
   },
   setOptions: function(options){
@@ -119,8 +181,10 @@ var tbwg = {
     this.selector = jQselect;
     return this;
   },
-  setGridSize: function(){
+  setGridSize: function(newGridSize){
+    console.log('NEW');
     this.selector[0].className = this.selector[0].className.replace(/\btbwb-grid-[0-9].*?\b/g, '');
+    this.options.gridSize = newGridSize;
     this.selector.addClass('tbwb-grid-'+this.options.gridSize);
   },
   setChilds: function(){
