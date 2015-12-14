@@ -16,6 +16,7 @@ var tbwg = {
   },
   lastResize: -1,
   childs: false,
+  overlayId: false,
   init: function(selector){
     if(typeof selector == 'undefined'){
       console.info('To use the Web Gallery from the-bauz you need to pass a CSS Selector');
@@ -65,6 +66,7 @@ var tbwg = {
         var me = event.data.currentInstance; //The Object in wich the event was triggert
 
         jQuery('body').addClass('tbwg-open');
+        jQuery('.'+me.overlayId).attr('style', '').css({left: '-'+(me.childs.index(jQuery(this))*100)+'vw', transition: 'left 0.8s ease-out'});
 
         if(me.callbacks.openItem){
           me.callbacks.openItem();
@@ -139,6 +141,7 @@ var tbwg = {
             });
             this.galleryContent = jQuery('<div id="tbwg-overlay"><div class="tbwg-dimmer"></div><div class="tbwg-content"><span id="tbwgClose">x</span><div class="tbwg-id-'+randomString+'">'+allContent+'</div></div></div>');
             jQuery('body').append(this.galleryContent);
+            context.overlayId = 'tbwg-id-'+randomString;
           } else {
             setTimeout(context.setUp.overlay(), 100);
           }
@@ -182,7 +185,6 @@ var tbwg = {
     return this;
   },
   setGridSize: function(newGridSize){
-    console.log('NEW');
     this.selector[0].className = this.selector[0].className.replace(/\btbwb-grid-[0-9].*?\b/g, '');
     this.options.gridSize = newGridSize;
     this.selector.addClass('tbwb-grid-'+this.options.gridSize);
@@ -190,11 +192,17 @@ var tbwg = {
   setChilds: function(){
     var childs = this.selector.children();
     childs.each(function(index){
-      var chilchild = jQuery(this).children();
+      var chilchild = jQuery(this).children(),
+          jQthis = jQuery(this);
       if(chilchild.length < 1){
         childs = childs.not(this);
       } else {
-        chilchild.wrap( "<div class='tb-web-gallery-inner-wrap'></div>" );
+        if(jQthis.has('img').length != 0){
+          chilchild.wrap( "<div class='tb-web-gallery-inner-wrap image-type'></div>" );
+        } else if(jQthis.has('p').length != 0 || jQthis.has('span.txt').length != 0) {
+          chilchild.wrap( "<div class='tb-web-gallery-inner-wrap text-type'></div>" );
+        }
+
       }
     });
     if(this.childs){
