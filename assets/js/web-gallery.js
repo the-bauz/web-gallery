@@ -6,12 +6,14 @@ var tbwg = {
     breakpoints: {
       420: 1,
       640: 2,
-      900: 3
+      960: 3
     }
   },
   callbacks:{
     openItem: false,
     closeItem: false,
+    nextItem: false,
+    prevItem: false,
     gridResize: false
   },
   lastResize: -1,
@@ -40,6 +42,8 @@ var tbwg = {
     this.setUp.overlay.apply(this);
     this.events.openItem.apply(this);
     this.events.closeItem.apply(this);
+    this.events.prevItem.apply(this);
+    this.events.nextItem.apply(this);
     this.events.gridResize.apply(this);
     return this;
   },
@@ -54,6 +58,16 @@ var tbwg = {
         this.callbacks.closeItem = callback;
       }
     },
+    nextItem: function(callback){
+      if(typeof callback != 'function'){
+        this.callbacks.nextItem = callback;
+      }
+    },
+    prevItem: function(callback){
+      if(typeof callback != 'function'){
+        this.callbacks.prevItem = callback;
+      }
+    },
     gridResize:function(callback){
       if(typeof callback != 'function'){
         this.callbacks.gridResize = callback;
@@ -66,7 +80,7 @@ var tbwg = {
         var me = event.data.currentInstance; //The Object in wich the event was triggert
 
         jQuery('body').addClass('tbwg-open');
-        jQuery('.'+me.overlayId).attr('style', '').css({left: '-'+(me.childs.index(jQuery(this))*100)+'vw', transition: 'left 0.8s ease-out'});
+        jQuery('.'+me.overlayId).attr('style', '').css({left: '-'+(me.childs.index(jQuery(this))*100)+'vw', transition: 'left 0.8s ease-out'}).addClass('active').siblings().removeClass('active');
 
         if(me.callbacks.openItem){
           me.callbacks.openItem();
@@ -80,6 +94,43 @@ var tbwg = {
 
         if(me.callbacks.closeItem){
           me.callbacks.closeItem();
+        }
+      });
+    },
+    nextItem: function(){
+      jQuery('#tbwg-overlay').on('click', '#tbwgNext', { currentInstance: this }, function(event){
+        var me = event.data.currentInstance; //The Object in wich the event was triggert
+        jQelem = jQuery('.'+me.overlayId);
+        if(jQelem.hasClass('active')){
+          jQelem.css('left',function(index, value){
+            var currentIndex = Math.round(Math.abs(parseInt(value))/jQuery(window).width());
+            if(me.childs.length > currentIndex+1){
+              return '-'+((currentIndex+1)*100)+'vw';
+            } else {
+              return value;
+            }
+          });
+          if(me.callbacks.nextItem){
+            me.callbacks.nextItem();
+          }
+        }
+      });
+    },
+    prevItem: function(){
+      console.log('setUP');
+      jQuery('#tbwg-overlay').on('click', '#tbwgPrev', { currentInstance: this }, function(event){
+        var me = event.data.currentInstance; //The Object in wich the event was triggert
+        jQelem = jQuery('.'+me.overlayId);
+        if(jQelem.hasClass('active')){
+          jQelem.css('left',function(index, value){
+            var currentIndex = Math.round(Math.abs(parseInt(value))/jQuery(window).width());
+            if(currentIndex != 0){
+              return '-'+((currentIndex-1)*100)+'vw';
+            }
+          });
+          if(me.callbacks.prevItem){
+            me.callbacks.prevItem();
+          }
         }
       });
     },
@@ -139,7 +190,7 @@ var tbwg = {
             context.childs.each(function(){
               allContent += jQuery(this).html();
             });
-            this.galleryContent = jQuery('<div id="tbwg-overlay"><div class="tbwg-dimmer"></div><div class="tbwg-content"><span id="tbwgClose">x</span><div class="tbwg-id-'+randomString+'">'+allContent+'</div></div></div>');
+            this.galleryContent = jQuery('<div id="tbwg-overlay"><div class="tbwg-dimmer"></div><div class="tbwg-content"><span id="tbwgClose">x</span><span id="tbwgNext">&#10095;</span><span id="tbwgPrev">&#10094;</span><div class="tbwg-id-'+randomString+'">'+allContent+'</div></div></div>');
             jQuery('body').append(this.galleryContent);
             context.overlayId = 'tbwg-id-'+randomString;
           } else {

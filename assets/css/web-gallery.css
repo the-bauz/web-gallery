@@ -50,10 +50,15 @@
   top: 0;
   display: none;
 }
-.tbwg-open #tbwg-overlay{
+body.tbwg-open {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+.tbwg-open #tbwg-overlay {
   display: block;
 }
-#tbwg-overlay .tbwg-dimmer{
+#tbwg-overlay .tbwg-dimmer {
   width: 100%;
   height: 100%;
   position: absolute;
@@ -96,7 +101,7 @@
   display: inline-block;
 }
 
-#tbwgClose {
+span#tbwgClose {
   position: absolute;
   width: 50px;
   height: 50px;
@@ -107,4 +112,20 @@
   right: 5px;
   top: 5px;
   cursor: pointer;
+}
+span#tbwgPrev, span#tbwgNext {
+  position: fixed;
+  top: 50%;
+  font-size: 40px;
+  width: 40px;
+  text-align: center;
+  font-family: monospace;
+  cursor: pointer;
+  z-index: 5;
+}
+span#tbwgNext{
+  right: 2%;
+}
+span#tbwgPrev{
+  left: 2%;
 }
