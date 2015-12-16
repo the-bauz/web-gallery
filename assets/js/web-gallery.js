@@ -76,8 +76,8 @@ var tbwg = {
   },
   events:{
     openItem:function(){
-      this.selector.on('click','.tb-web-gallery-item', { currentInstance: this },function(event){
-        var me = event.data.currentInstance; //The Object in wich the event was triggert
+      this.selector.on('click.tbwg.openItem','.tb-web-gallery-item', { currentInstance: this },function(event){
+        var me = event.data.currentInstance; //The Object in which the event was triggert
 
         jQuery('body').addClass('tbwg-open');
         jQuery('.'+me.overlayId).attr('style', '').css({left: '-'+(me.childs.index(jQuery(this))*100)+'vw', transition: 'left 0.8s ease-out'}).addClass('active').siblings().removeClass('active');
@@ -88,18 +88,24 @@ var tbwg = {
       });
     },
     closeItem: function(){
-      jQuery('#tbwg-overlay').on('click', '#tbwgClose', { currentInstance: this }, function(event){
-        var me = event.data.currentInstance; //The Object in wich the event was triggert
+      if(jQuery._data( jQuery("#tbwg-overlay")[0], "events" )){
+        if(typeof this.helper.searchArrayForObj(jQuery._data( jQuery("#tbwg-overlay")[0], "events" ).click, "namespace", "closeItem.tbwg")) != 'undefined'){
+          return true; //no Callback is triggert
+        }
+      }
+      jQuery('#tbwg-overlay').on('click.tbwg.closeItem', '#tbwgClose', { currentInstance: this }, function(event){
+        var me = event.data.currentInstance; //The Object in which the event was triggert
         jQuery('body').removeClass('tbwg-open');
 
         if(me.callbacks.closeItem){
-          me.callbacks.closeItem();
+                                    //TODO
+          me.callbacks.closeItem(); //Only the Object which first sets the Event Listener will trigger it's Callback
         }
       });
     },
     nextItem: function(){
-      jQuery('#tbwg-overlay').on('click', '#tbwgNext', { currentInstance: this }, function(event){
-        var me = event.data.currentInstance; //The Object in wich the event was triggert
+      jQuery('#tbwg-overlay').on('click.tbwg.nextItem', '#tbwgNext', { currentInstance: this }, function(event){
+        var me = event.data.currentInstance; //The Object in which the event was triggert
         jQelem = jQuery('.'+me.overlayId);
         if(jQelem.hasClass('active')){
           jQelem.css('left',function(index, value){
@@ -117,9 +123,8 @@ var tbwg = {
       });
     },
     prevItem: function(){
-      console.log('setUP');
-      jQuery('#tbwg-overlay').on('click', '#tbwgPrev', { currentInstance: this }, function(event){
-        var me = event.data.currentInstance; //The Object in wich the event was triggert
+      jQuery('#tbwg-overlay').on('click.tbwg.prevItem', '#tbwgPrev', { currentInstance: this }, function(event){
+        var me = event.data.currentInstance; //The Object in which the event was triggert
         jQelem = jQuery('.'+me.overlayId);
         if(jQelem.hasClass('active')){
           jQelem.css('left',function(index, value){
@@ -149,7 +154,7 @@ var tbwg = {
 
         len = keys.length;
         jQuery(window).resize({ currentInstance: this, sortedBP: keys },function(event){
-          var me = event.data.currentInstance, //The Object in wich the event was triggert
+          var me = event.data.currentInstance, //The Object in which the event was triggert
               sBP = event.data.sortedBP, //sorted Break Points
               newWidth = jQuery(this).width();
 
@@ -217,9 +222,18 @@ var tbwg = {
           if (obj.hasOwnProperty(key)) size++;
       }
       return size;
+    },
+    searchArrayForObj: function(arr, objKey, objVal){
+      return arr.filter(function (obj) {
+        return obj[objKey] === objVal;
+      })[0];
     }
   },
   setOptions: function(options){
+    //TODO
+    /*
+     *  Check Options before passinig it or check if Syntax is robust enough to handle unchecked options / maybe just a warning to the User
+     */
     this.options = options;
     return this;
   },
@@ -241,6 +255,12 @@ var tbwg = {
     this.selector.addClass('tbwb-grid-'+this.options.gridSize);
   },
   setChilds: function(){
+    if(this.childs){ //Will only be executed if tbwg was called again on same elem
+      this.selector.off('click.tbwg','.tb-web-gallery-item');
+      this.childs.find('.tb-web-gallery-inner-wrap > *').unwrap();
+      this.childs.removeClass('tb-web-gallery-item');
+    }
+
     var childs = this.selector.children();
     childs.each(function(index){
       var chilchild = jQuery(this).children(),
@@ -256,13 +276,6 @@ var tbwg = {
 
       }
     });
-    if(this.childs){
-      this.childs.removeClass('tb-web-gallery-item');
-      //TODO
-      /*
-       *  Detach possible events
-       */
-    }
     childs.addClass('tb-web-gallery-item');
     this.childs = childs;
   }
