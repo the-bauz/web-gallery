@@ -36,7 +36,12 @@ var tbwg = {
       this.setSelector.call(this, selector);
     }
     //SET GRID SIZE VIA CSS
-    this.setGridSize.call(this, 3); //JUST FOR TESTING TODO MAKE DYNAMIC
+    if(typeof this.options.gridSize == 'number'){
+      this.setGridSize.call(this, this.options.gridSize);
+    } else {
+      //GridSize was not set but the default was overwritten or the type of the gridsize set by the user is not a numer -> invalid
+      this.setGridSize.call(this, 3);
+    }
 
     this.setChilds.apply(this);
     this.setUp.overlay.apply(this);
