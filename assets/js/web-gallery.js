@@ -94,7 +94,7 @@ var tbwg = {
     },
     closeItem: function(){
       if(jQuery._data( jQuery("#tbwg-overlay")[0], "events" )){
-        if(typeof this.helper.searchArrayForObj(jQuery._data( jQuery("#tbwg-overlay")[0], "events" ).click, "namespace", "closeItem.tbwg")) != 'undefined'){
+        if(typeof this.helper.searchArrayForObj(jQuery._data( jQuery("#tbwg-overlay")[0], "events" ).click, "namespace", "closeItem.tbwg") != 'undefined'){
           return true; //no Callback is triggert
         }
       }
