@@ -39,6 +39,7 @@
 /*IMAGE TYPE*/
 .tb-web-gallery .tb-web-gallery-item img:first-of-type{
   max-width: 100%;
+  min-width: 100%;
 }
 
 
@@ -128,4 +129,7 @@ span#tbwgNext{
 }
 span#tbwgPrev{
   left: 2%;
+}
+.no-arrows span#tbwgPrev, .no-arrows span#tbwgNext {
+  display: none;
 }

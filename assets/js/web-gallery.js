@@ -2,6 +2,7 @@ var tbwg = {
   selector: false,
   galleryContent: false,
   options: {
+    arrows: true,
     gridSize: 3,
     breakpoints: {
       420: 1,
@@ -19,7 +20,7 @@ var tbwg = {
   lastResize: -1,
   childs: false,
   overlayId: false,
-  init: function(selector){
+  init: function(selector, options){
     if(typeof selector == 'undefined'){
       console.info('To use the Web Gallery from the-bauz you need to pass a CSS Selector');
       return this;
@@ -83,8 +84,11 @@ var tbwg = {
     openItem:function(){
       this.selector.on('click.tbwg.openItem','.tb-web-gallery-item', { currentInstance: this },function(event){
         var me = event.data.currentInstance; //The Object in which the event was triggert
-
-        jQuery('body').addClass('tbwg-open');
+        if(me.options.arrows){
+          jQuery('body').addClass('tbwg-open');
+        } else {
+          jQuery('body').addClass('tbwg-open no-arrows');
+        }
         jQuery('.'+me.overlayId).attr('style', '').css({left: '-'+(me.childs.index(jQuery(this))*100)+'vw', transition: 'left 0.8s ease-out'}).addClass('active').siblings().removeClass('active');
 
         if(me.callbacks.openItem){
@@ -95,12 +99,12 @@ var tbwg = {
     closeItem: function(){
       if(jQuery._data( jQuery("#tbwg-overlay")[0], "events" )){
         if(typeof this.helper.searchArrayForObj(jQuery._data( jQuery("#tbwg-overlay")[0], "events" ).click, "namespace", "closeItem.tbwg") != 'undefined'){
-          return true; //no Callback is triggert
+          return true; //no Callback will be triggert
         }
       }
       jQuery('#tbwg-overlay').on('click.tbwg.closeItem', '#tbwgClose', { currentInstance: this }, function(event){
         var me = event.data.currentInstance; //The Object in which the event was triggert
-        jQuery('body').removeClass('tbwg-open');
+        jQuery('body').removeClass('tbwg-open no-arrows');
 
         if(me.callbacks.closeItem){
                                     //TODO
@@ -235,11 +239,11 @@ var tbwg = {
     }
   },
   setOptions: function(options){
-    //TODO
-    /*
-     *  Check Options before passinig it or check if Syntax is robust enough to handle unchecked options / maybe just a warning to the User
-     */
-    this.options = options;
+    for (var key in options) {
+      if (options.hasOwnProperty(key) && typeof this.options[key] != 'undefined') {
+        this.options[key] = options[key];
+      }
+    }
     return this;
   },
   setSelector: function(selector){
