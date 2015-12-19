@@ -91,7 +91,7 @@ body.tbwg-open {
 #tbwg-overlay .tbwg-content div.tb-web-gallery-inner-wrap.image-type img {
   max-width: 90%;
   max-height: 90vh;
-  margin: 5% auto;
+  margin: 5vh auto;
   display: block;
 }
 #tbwg-overlay div.tb-web-gallery-inner-wrap.text-type p, #tbwg-overlay div.tb-web-gallery-inner-wrap.text-type span.txt {

@@ -1,6 +1,7 @@
-# web-gallery (IN DEVELOPMENT)
+# web-gallery (BETA)
 A Free Web-Based Gallery made for you by [the-bauz](http://the-bauz.com).
 
+This Example can be found on [the-bauz.com/web-gallery](http://the-bauz.com/web-gallery). Check it out and if you find any Bugs feel free to resolve them or open an issue here on GitHub.
 
 You can use this Gallery in your personal Projects as well as extending this Project.
 
