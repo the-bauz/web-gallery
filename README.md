@@ -1,18 +1,18 @@
-# the-bauz Web Gallery (BETA)
-A free small javascript libary to implement a simple web gallery!   
+# the-bauz web gallery (BETA)
+A free small javascript library to implement a simple web gallery!   
 made for you by [the-bauz](http://the-bauz.com)
 
-This Example can be found on [the-bauz.com/web-gallery](http://the-bauz.com/web-gallery). Check it out and if you find any Bugs feel free to resolve them or open an issue here on GitHub.
+This example can be found on [the-bauz.com/web-gallery](http://the-bauz.com/web-gallery). Check it out and if you find any bugs feel free to resolve them or open an issue here on GitHub.
 
-You can use this Gallery in your personal Projects as well as extending this Project.
+You can use this gallery in your personal projects as well as extending this project.
 
 
 ## How to use
-In the assets Folder you will find all the dependencies needed by the index.html were an ready-to-use instance of the Web Gallery already is in Place, but generlly the Web Gallery is just a javascript Extension making unordered lists to galleries with a Pop-Up Effect.  
+In the assets folder you will find all the dependencies needed by the index.html, were a ready-to-use instance of the web gallery already is in place, but generlly the web gallery is just a javascript extension making unordered lists to galleries with a Pop-Up effect.  
 ```javascript
 tbwg.init(selector);
 ```
-or optionally a function call with Options
+or optionally a function call with options
 ```javascript
 tbwg.init(selector, {
   option1: 'option1',
@@ -22,7 +22,7 @@ tbwg.init(selector, {
 
 
 ## Set Up
-First you need to check your HTML Strukture because it need to fit in the Two defined Types avalible in this Plug in.
+First you need to check your HTML strukture because it needs to fit in the two defined types avalible in this plug in.
 
 ### Text type
 ```html
@@ -35,8 +35,8 @@ First you need to check your HTML Strukture because it need to fit in the Two de
 tbwg.init('#tbwgItem');
 </script>
 ```  
-or some Variation of that pattern.
-_Important is that the Text is wrapped in the paragraph-tag_
+or some variation of that pattern.  
+_Important is that the text is wrapped in the paragraph-tag_
 
 
 ### Image type
@@ -50,5 +50,5 @@ _Important is that the Text is wrapped in the paragraph-tag_
 tbwg.init('#tbwgItem');
 </script>
 ```  
-or some Variation of that pattern.
-_Important is that the Image you want to display is the first image in an Image-tag_
+or some variation of that pattern.  
+_Important is that the image you want to display is the first image in an image-tag_
