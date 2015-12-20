@@ -89,7 +89,7 @@ var tbwg = {
         } else {
           jQuery('body').addClass('tbwg-open no-arrows');
         }
-        jQuery('.'+me.overlayId).attr('style', '').css({left: '-'+(me.childs.index(jQuery(this))*100)+'vw', transition: 'left 0.8s ease-out'}).addClass('active').siblings().removeClass('active');
+        jQuery('.'+me.overlayId).attr('style', '').css({left: '-'+(me.childs.index(jQuery(this))*100)+'vw', transition: 'left 0.8s ease-out'}).removeClass('inactive').addClass('active').siblings().addClass('inactive').removeClass('active');
 
         if(me.callbacks.openItem){
           me.callbacks.openItem();
@@ -192,10 +192,21 @@ var tbwg = {
   setUp:{
     overlay:function(){
       if(document.getElementById('tbwg-overlay')){
-        //TODO
-        /*
-         *  If the tbwg overlay already exists we can "reuse" it and integrate the content of this Object inside it in a div with a specified class
-         */
+        var waitFunc = function(context){
+          if(context.childs){
+            var randomString = tbwg.helper.randomStr(8);
+            var allContent = '';
+            context.childs.each(function(){
+              allContent += jQuery(this).html();
+            });
+            this.galleryContent = jQuery('<div class="tbwg-id-'+randomString+'">'+allContent+'</div>');
+            jQuery('#tbwg-overlay .tbwg-content').append(this.galleryContent);
+            context.overlayId = 'tbwg-id-'+randomString;
+          } else {
+            setTimeout(context.setUp.overlay(), 100);
+          }
+        };
+        waitFunc(this);
       } else {
         var waitFunc = function(context){
           if(context.childs){

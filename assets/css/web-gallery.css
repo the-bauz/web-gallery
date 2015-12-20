@@ -81,7 +81,9 @@ body.tbwg-open {
   width: 100%;
   display: block;
 }
-
+#tbwg-overlay .tbwg-content > div.inactive{
+  display: none;
+}
 #tbwg-overlay .tbwg-content div.tb-web-gallery-inner-wrap {
   float: left;
   width: 100vw;
