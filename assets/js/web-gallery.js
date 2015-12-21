@@ -3,6 +3,7 @@ var tbwg = {
   galleryContent: false,
   options: {
     arrows: true,
+    closeOnOverlayClick: true,
     gridSize: 3,
     breakpoints: {
       420: 1,
@@ -47,7 +48,7 @@ var tbwg = {
     this.setChilds.apply(this);
     this.setUp.overlay.apply(this);
     this.events.openItem.apply(this);
-    this.events.closeItem.apply(this);
+    this.events.closeItem.setEvt.apply(this); //This is just for now the only Call to differ from the others TODO the hole Code needs to be refactored
     this.events.prevItem.apply(this);
     this.events.nextItem.apply(this);
     this.events.gridResize.apply(this);
@@ -89,6 +90,15 @@ var tbwg = {
         } else {
           jQuery('body').addClass('tbwg-open no-arrows');
         }
+        if(me.options.closeOnOverlayClick){
+          console.log('jup müsste aktiviert werden');
+          jQuery('#tbwg-overlay').on('click.currentClose', '.tbwg-dimmer', { currentInstance: this }, function(){
+            var me = event.data.currentInstance; //The Object in which the event was triggert
+            console.log('KLICK!!!');
+            console.log(me);
+            me.events.closeItem.func(me);
+          });
+        }
         jQuery('.'+me.overlayId).attr('style', '').css({left: '-'+(me.childs.index(jQuery(this))*100)+'vw', transition: 'left 0.8s ease-out'}).removeClass('inactive').addClass('active').siblings().addClass('inactive').removeClass('active');
 
         if(me.callbacks.openItem){
@@ -96,21 +106,26 @@ var tbwg = {
         }
       });
     },
-    closeItem: function(){
-      if(jQuery._data( jQuery("#tbwg-overlay")[0], "events" )){
-        if(typeof this.helper.searchArrayForObj(jQuery._data( jQuery("#tbwg-overlay")[0], "events" ).click, "namespace", "closeItem.tbwg") != 'undefined'){
-          return true; //no Callback will be triggert
+    closeItem: {
+      setEvt: function(){
+        if(jQuery._data( jQuery("#tbwg-overlay")[0], "events" )){
+          if(typeof this.helper.searchArrayForObj(jQuery._data( jQuery("#tbwg-overlay")[0], "events" ).click, "namespace", "closeItem.tbwg") != 'undefined'){
+            return true; //no Callback will be triggert because there is already a close event on the Close button
+          }
         }
-      }
-      jQuery('#tbwg-overlay').on('click.tbwg.closeItem', '#tbwgClose', { currentInstance: this }, function(event){
-        var me = event.data.currentInstance; //The Object in which the event was triggert
+        jQuery('#tbwg-overlay').on('click.tbwg.closeItem', '#tbwgClose', { currentInstance: this }, function(event){
+          var me = event.data.currentInstance; //The Object in which the event was triggert
+          me.events.closeItem.func(me);
+        });
+      },
+      func: function(me){
         jQuery('body').removeClass('tbwg-open no-arrows');
-
+        jQuery('#tbwg-overlay').off('click.currentClose', '.tbwg-dimmer');
         if(me.callbacks.closeItem){
                                     //TODO
           me.callbacks.closeItem(); //Only the Object which first sets the Event Listener will trigger it's Callback
         }
-      });
+      }
     },
     nextItem: function(){
       jQuery('#tbwg-overlay').on('click.tbwg.nextItem', '#tbwgNext', { currentInstance: this }, function(event){

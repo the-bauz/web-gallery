@@ -64,6 +64,7 @@ body.tbwg-open {
   height: 100%;
   position: absolute;
   background: rgba(0,0,0,0.4);
+  z-index: 1;
 }
 #tbwg-overlay .tbwg-content {
   position: relative;
@@ -95,6 +96,8 @@ body.tbwg-open {
   max-height: 90vh;
   margin: 5vh auto;
   display: block;
+  z-index:2;
+  position: relative;
 }
 #tbwg-overlay div.tb-web-gallery-inner-wrap.text-type p, #tbwg-overlay div.tb-web-gallery-inner-wrap.text-type span.txt {
   padding: 15px;
@@ -102,8 +105,12 @@ body.tbwg-open {
   margin: 20%;
   background: rgba(255,255,255,0.5);
   display: inline-block;
+  z-index:2;
+  position: relative;
 }
-
+span#tbwgPrev, span#tbwgNext, span#tbwgClose {
+  z-index:2;
+}
 span#tbwgClose {
   position: absolute;
   width: 50px;
