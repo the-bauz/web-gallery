@@ -47,11 +47,11 @@ var tbwg = {
 
     this.setChilds.apply(this);
     this.setUp.overlay.apply(this);
-    this.events.openItem.apply(this);
-    this.events.closeItem.setEvt.apply(this); //This is just for now the only Call to differ from the others TODO the hole Code needs to be refactored
-    this.events.prevItem.apply(this);
-    this.events.nextItem.apply(this);
-    this.events.gridResize.apply(this);
+    this.events.openItem.setEvt.apply(this);
+    this.events.closeItem.setEvt.apply(this);
+    this.events.prevItem.setEvt.apply(this);
+    this.events.nextItem.setEvt.apply(this);
+    this.events.gridResize.setEvt.apply(this);
     return this;
   },
   on:{
@@ -82,9 +82,14 @@ var tbwg = {
     }
   },
   events:{
-    openItem:function(){
-      this.selector.on('click.tbwg.openItem','.tb-web-gallery-item', { currentInstance: this },function(event){
-        var me = event.data.currentInstance; //The Object in which the event was triggert
+    openItem:{
+      setEvt: function(){
+        this.selector.on('click.tbwg.openItem','.tb-web-gallery-item', { currentInstance: this },function(event){
+          var me = event.data.currentInstance; //The Object in which the event was triggert
+          me.events.openItem.func(me);
+        });
+      },
+      func: function(me){
         if(me.options.arrows){
           jQuery('body').addClass('tbwg-open');
         } else {
@@ -104,7 +109,7 @@ var tbwg = {
         if(me.callbacks.openItem){
           me.callbacks.openItem();
         }
-      });
+      }
     },
     closeItem: {
       setEvt: function(){
@@ -127,9 +132,14 @@ var tbwg = {
         }
       }
     },
-    nextItem: function(){
-      jQuery('#tbwg-overlay').on('click.tbwg.nextItem', '#tbwgNext', { currentInstance: this }, function(event){
-        var me = event.data.currentInstance; //The Object in which the event was triggert
+    nextItem: {
+      setEvt: function(){
+        jQuery('#tbwg-overlay').on('click.tbwg.nextItem', '#tbwgNext', { currentInstance: this }, function(event){
+          var me = event.data.currentInstance; //The Object in which the event was triggert
+          me.events.nextItem.func(me);
+        });
+      },
+      func: function(me){
         jQelem = jQuery('.'+me.overlayId);
         if(jQelem.hasClass('active')){
           jQelem.css('left',function(index, value){
@@ -144,11 +154,16 @@ var tbwg = {
             me.callbacks.nextItem();
           }
         }
-      });
+      }
     },
-    prevItem: function(){
-      jQuery('#tbwg-overlay').on('click.tbwg.prevItem', '#tbwgPrev', { currentInstance: this }, function(event){
-        var me = event.data.currentInstance; //The Object in which the event was triggert
+    prevItem: {
+      setEvt: function(){
+        jQuery('#tbwg-overlay').on('click.tbwg.prevItem', '#tbwgPrev', { currentInstance: this }, function(event){
+          var me = event.data.currentInstance; //The Object in which the event was triggert
+          me.events.prevItem.func(me);
+        });
+      },
+      func: function(me){
         jQelem = jQuery('.'+me.overlayId);
         if(jQelem.hasClass('active')){
           jQelem.css('left',function(index, value){
@@ -161,47 +176,52 @@ var tbwg = {
             me.callbacks.prevItem();
           }
         }
-      });
+      }
     },
-    gridResize: function(){
-      if(this.helper.countObj(this.options.breakpoints) > 0){
-        var keys = [],
-            k, len;
+    gridResize: {
+      setEvt: function(){
+        if(this.helper.countObj(this.options.breakpoints) > 0){
+          var keys = [],
+              k, len;
 
-        for (k in this.options.breakpoints) {
-          if (this.options.breakpoints.hasOwnProperty(k)) {
-            keys.push(k);
-          }
-        }
-
-        keys.sort();
-
-        len = keys.length;
-        jQuery(window).resize({ currentInstance: this, sortedBP: keys },function(event){
-          var me = event.data.currentInstance, //The Object in which the event was triggert
-              sBP = event.data.sortedBP, //sorted Break Points
-              newWidth = jQuery(this).width();
-
-          for(var i = 0; i < sBP.length; i++){
-            if(i == 0){
-              if(newWidth <= sBP[0] && me.lastResize > sBP[0] || newWidth <= sBP[0] && me.lastResize == -1){
-                me.setGridSize.call(me, me.options.breakpoints[sBP[0]]);
-                if(me.callbacks.gridResize){
-                  me.callbacks.gridResize();
-                }
-              }
-            } else {
-              if (newWidth <= sBP[i] && me.lastResize > sBP[i] || newWidth > sBP[i-1] && me.lastResize <= sBP[i-1]) {
-                me.setGridSize.call(me, me.options.breakpoints[sBP[i]]);
-                if(me.callbacks.gridResize){
-                  me.callbacks.gridResize();
-                }
-              }
+          for (k in this.options.breakpoints) {
+            if (this.options.breakpoints.hasOwnProperty(k)) {
+              keys.push(k);
             }
           }
-          me.lastResize = newWidth;
-        });
+
+          keys.sort();
+
+          len = keys.length;
+          jQuery(window).resize({ currentInstance: this, sortedBP: keys },function(event){
+            var me = event.data.currentInstance, //The Object in which the event was triggert
+                sBP = event.data.sortedBP, //sorted Break Points
+                newWidth = jQuery(this).width();
+
+            me.events.gridResize.func(me, sBP, newWidth);
+          });
+        }
       }
+    },
+    func: function(me, sBP, newWidth){
+      for(var i = 0; i < sBP.length; i++){
+        if(i == 0){
+          if(newWidth <= sBP[0] && me.lastResize > sBP[0] || newWidth <= sBP[0] && me.lastResize == -1){
+            me.setGridSize.call(me, me.options.breakpoints[sBP[0]]);
+            if(me.callbacks.gridResize){
+              me.callbacks.gridResize();
+            }
+          }
+        } else {
+          if (newWidth <= sBP[i] && me.lastResize > sBP[i] || newWidth > sBP[i-1] && me.lastResize <= sBP[i-1]) {
+            me.setGridSize.call(me, me.options.breakpoints[sBP[i]]);
+            if(me.callbacks.gridResize){
+              me.callbacks.gridResize();
+            }
+          }
+        }
+      }
+      me.lastResize = newWidth;
     }
   },
   setUp:{
