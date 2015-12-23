@@ -4,6 +4,7 @@ var tbwg = {
   options: {
     arrows: true,
     closeOnOverlayClick: true,
+    captureKeyboard: true,
     gridSize: 3,
     breakpoints: {
       420: 1,
@@ -86,25 +87,36 @@ var tbwg = {
       setEvt: function(){
         this.selector.on('click.tbwg.openItem','.tb-web-gallery-item', { currentInstance: this },function(event){
           var me = event.data.currentInstance; //The Object in which the event was triggert
-          me.events.openItem.func(me);
+          me.events.openItem.func(me, this);
         });
       },
-      func: function(me){
+      func: function(me, clicked){
         if(me.options.arrows){
           jQuery('body').addClass('tbwg-open');
         } else {
           jQuery('body').addClass('tbwg-open no-arrows');
         }
         if(me.options.closeOnOverlayClick){
-          console.log('jup müsste aktiviert werden');
-          jQuery('#tbwg-overlay').on('click.currentClose', '.tbwg-dimmer', { currentInstance: this }, function(){
-            var me = event.data.currentInstance; //The Object in which the event was triggert
-            console.log('KLICK!!!');
-            console.log(me);
+          jQuery('#tbwg-overlay').on('click.currentClose', '.tbwg-dimmer', { currentInstance: me }, function(event){
+            var me = event.data.currentInstance;
             me.events.closeItem.func(me);
           });
         }
-        jQuery('.'+me.overlayId).attr('style', '').css({left: '-'+(me.childs.index(jQuery(this))*100)+'vw', transition: 'left 0.8s ease-out'}).removeClass('inactive').addClass('active').siblings().addClass('inactive').removeClass('active');
+        if(me.options.captureKeyboard){
+          jQuery(document).on('keydown.tbwg', null, { currentInstance: me }, function(event) {
+            var me = event.data.currentInstance;
+            switch(event.which) {
+                case 37: // left
+                  me.events.prevItem.func(me);
+                break;
+
+                case 39: // right
+                  me.events.nextItem.func(me);
+                break;
+              }
+            });
+        }
+        jQuery('.'+me.overlayId).attr('style', '').css({left: '-'+(me.childs.index(jQuery(clicked))*100)+'vw', transition: 'left 0.8s ease-out'}).removeClass('inactive').addClass('active').siblings().addClass('inactive').removeClass('active');
 
         if(me.callbacks.openItem){
           me.callbacks.openItem();
@@ -126,6 +138,7 @@ var tbwg = {
       func: function(me){
         jQuery('body').removeClass('tbwg-open no-arrows');
         jQuery('#tbwg-overlay').off('click.currentClose', '.tbwg-dimmer');
+        jQuery(document).off('keydown.tbwg');
         if(me.callbacks.closeItem){
                                     //TODO
           me.callbacks.closeItem(); //Only the Object which first sets the Event Listener will trigger it's Callback
@@ -201,27 +214,27 @@ var tbwg = {
             me.events.gridResize.func(me, sBP, newWidth);
           });
         }
-      }
-    },
-    func: function(me, sBP, newWidth){
-      for(var i = 0; i < sBP.length; i++){
-        if(i == 0){
-          if(newWidth <= sBP[0] && me.lastResize > sBP[0] || newWidth <= sBP[0] && me.lastResize == -1){
-            me.setGridSize.call(me, me.options.breakpoints[sBP[0]]);
-            if(me.callbacks.gridResize){
-              me.callbacks.gridResize();
+      },
+      func: function(me, sBP, newWidth){
+        for(var i = 0; i < sBP.length; i++){
+          if(i == 0){
+            if(newWidth <= sBP[0] && me.lastResize > sBP[0] || newWidth <= sBP[0] && me.lastResize == -1){
+              me.setGridSize.call(me, me.options.breakpoints[sBP[0]]);
+              if(me.callbacks.gridResize){
+                me.callbacks.gridResize();
+              }
             }
-          }
-        } else {
-          if (newWidth <= sBP[i] && me.lastResize > sBP[i] || newWidth > sBP[i-1] && me.lastResize <= sBP[i-1]) {
-            me.setGridSize.call(me, me.options.breakpoints[sBP[i]]);
-            if(me.callbacks.gridResize){
-              me.callbacks.gridResize();
+          } else {
+            if (newWidth <= sBP[i] && me.lastResize > sBP[i] || newWidth > sBP[i-1] && me.lastResize <= sBP[i-1]) {
+              me.setGridSize.call(me, me.options.breakpoints[sBP[i]]);
+              if(me.callbacks.gridResize){
+                me.callbacks.gridResize();
+              }
             }
           }
         }
+        me.lastResize = newWidth;
       }
-      me.lastResize = newWidth;
     }
   },
   setUp:{
