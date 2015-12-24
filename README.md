@@ -1,4 +1,4 @@
-# the-bauz web gallery (BETA)
+# the-bauz web gallery (Omega)
 A free small javascript library to implement a simple web gallery!   
 made for you by [the-bauz](http://the-bauz.com)
 
