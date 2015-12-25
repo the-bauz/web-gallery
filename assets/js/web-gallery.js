@@ -5,6 +5,7 @@ var tbwg = {
     arrows: true,
     closeOnOverlayClick: true,
     captureKeyboard: true,
+    cssTransitions: true, //If false Javascript animation will be used
     gridSize: 3,
     breakpoints: {
       420: 1,
@@ -155,14 +156,33 @@ var tbwg = {
       func: function(me){
         jQelem = jQuery('.'+me.overlayId);
         if(jQelem.hasClass('active')){
-          jQelem.css('left',function(index, value){
-            var currentIndex = Math.round(Math.abs(parseInt(value))/jQuery(window).width());
+          if(!me.options.cssTransitions){
+            var JSelem = document.getElementsByClassName(me.overlayId)[0],
+                windowWidth = jQuery(window).width();
+            var currentIndex = Math.round(Math.abs(parseInt(JSelem.offsetLeft))/windowWidth);
             if(me.childs.length > currentIndex+1){
-              return '-'+((currentIndex+1)*100)+'vw';
-            } else {
-              return value;
+              var duration = 120, // = 600 ms
+                  currentFrame = 0;
+              jQelem.attr('style', '');
+              var animationInterval = setInterval(function(){
+                JSelem.style.left = '-'+((currentIndex+(currentFrame/duration))*windowWidth)+'px';
+                if(currentFrame >=  duration){
+                  clearInterval(animationInterval);
+                  jQelem.attr('style', 'left:-'+(currentIndex+1)*100+'vw');
+                }
+                currentFrame++;
+              }, 5);
             }
-          });
+          } else {
+            jQelem.css('left',function(index, value){
+              var currentIndex = Math.round(Math.abs(parseInt(value))/jQuery(window).width());
+              if(me.childs.length > currentIndex+1){
+                return '-'+((currentIndex+1)*100)+'vw';
+              } else {
+                return value;
+              }
+            });
+          }
           if(me.callbacks.nextItem){
             me.callbacks.nextItem();
           }
@@ -179,12 +199,31 @@ var tbwg = {
       func: function(me){
         jQelem = jQuery('.'+me.overlayId);
         if(jQelem.hasClass('active')){
-          jQelem.css('left',function(index, value){
-            var currentIndex = Math.round(Math.abs(parseInt(value))/jQuery(window).width());
+          if(!me.options.cssTransitions){
+            var JSelem = document.getElementsByClassName(me.overlayId)[0],
+                windowWidth = jQuery(window).width();
+            var currentIndex = Math.round(Math.abs(parseInt(JSelem.offsetLeft))/windowWidth);
             if(currentIndex != 0){
-              return '-'+((currentIndex-1)*100)+'vw';
+              var duration = 120, // = 600 ms
+                  currentFrame = 0;
+              jQelem.attr('style', '');
+              var animationInterval = setInterval(function(){
+                JSelem.style.left = '-'+((currentIndex-(currentFrame/duration))*windowWidth)+'px';
+                if(currentFrame >=  duration){
+                  clearInterval(animationInterval);
+                  jQelem.attr('style', 'left:-'+(currentIndex-1)*100+'vw');
+                }
+                currentFrame++;
+              }, 5);
             }
-          });
+          } else {
+            jQelem.css('left',function(index, value){
+              var currentIndex = Math.round(Math.abs(parseInt(value))/jQuery(window).width());
+              if(currentIndex != 0){
+                return '-'+((currentIndex-1)*100)+'vw';
+              }
+            });
+          }
           if(me.callbacks.prevItem){
             me.callbacks.prevItem();
           }
