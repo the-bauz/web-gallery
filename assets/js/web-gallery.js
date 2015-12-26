@@ -54,6 +54,8 @@ var tbwg = {
     this.events.prevItem.setEvt.apply(this);
     this.events.nextItem.setEvt.apply(this);
     this.events.gridResize.setEvt.apply(this);
+
+    this.events.gridResize.func(this, jQuery(window).width());
     return this;
   },
   on:{
@@ -233,28 +235,27 @@ var tbwg = {
     gridResize: {
       setEvt: function(){
         if(this.helper.countObj(this.options.breakpoints) > 0){
-          var keys = [],
-              k, len;
-
-          for (k in this.options.breakpoints) {
-            if (this.options.breakpoints.hasOwnProperty(k)) {
-              keys.push(k);
-            }
-          }
-
-          keys.sort();
-
-          len = keys.length;
-          jQuery(window).resize({ currentInstance: this, sortedBP: keys },function(event){
+          jQuery(window).resize({ currentInstance: this },function(event){
             var me = event.data.currentInstance, //The Object in which the event was triggert
-                sBP = event.data.sortedBP, //sorted Break Points
                 newWidth = jQuery(this).width();
 
-            me.events.gridResize.func(me, sBP, newWidth);
+            me.events.gridResize.func(me, newWidth);
           });
         }
       },
-      func: function(me, sBP, newWidth){
+      func: function(me, newWidth){
+        var keys = [],
+            k;
+
+        for (k in me.options.breakpoints) {
+          if (me.options.breakpoints.hasOwnProperty(k)) {
+            keys.push(k);
+          }
+        }
+
+        keys.sort();
+
+        var sBP = keys; //sorted Breakpoints
         for(var i = 0; i < sBP.length; i++){
           if(i == 0){
             if(newWidth <= sBP[0] && me.lastResize > sBP[0] || newWidth <= sBP[0] && me.lastResize == -1){
