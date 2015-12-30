@@ -6,7 +6,7 @@ var tbwg = {
     closeOnOverlayClick: true,
     captureKeyboard: true,
     cssTransitions: true, //If false Javascript animation will be used
-    gridSize: 3,
+    gridSize: 3, //default gridSize will be overwritten by breakpoints definition
     breakpoints: {
       420: 1,
       640: 2,
@@ -340,6 +340,22 @@ var tbwg = {
   setOptions: function(options){
     for (var key in options) {
       if (options.hasOwnProperty(key) && typeof this.options[key] != 'undefined') {
+        if(key == 'breakpoints'){ //catch breakpoint issue
+          var keys = [],
+              k;
+
+          for (k in options.breakpoints) {
+            if (options.breakpoints.hasOwnProperty(k)) {
+              keys.push(k);
+            }
+          }
+
+          keys.sort();
+
+          keys.push(parseInt(keys[keys.length-1])+1);
+          options.breakpoints[keys[keys.length-1]] = this.options.gridSize;
+          console.log(options.breakpoints);
+        }
         this.options[key] = options[key];
       }
     }
