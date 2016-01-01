@@ -53,7 +53,14 @@
 
 
   <script>
-  tbwg.init('#mainGallery', {breakpoints:{420: 1, 640: 2}});
+  var gallery1 = tbwg;
+  var gallery2 = tbwg;
+  gallery1 = gallery1.on.closeItem.call(gallery1, function(){
+    alert('CLOSE');
+  });
+  gallery1.init('#mainGallery', {breakpoints:{420: 1, 640: 2}});
+  console.log(gallery2);
+  console.log(gallery1 == gallery2);
   </script>
 </body>
 </html>

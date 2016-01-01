@@ -50,7 +50,6 @@ var tbwg = {
     this.setChilds.apply(this);
     this.setUp.overlay.apply(this);
     this.events.openItem.setEvt.apply(this);
-    this.events.closeItem.setEvt.apply(this);
     this.events.prevItem.setEvt.apply(this);
     this.events.nextItem.setEvt.apply(this);
     this.events.gridResize.setEvt.apply(this);
@@ -60,29 +59,34 @@ var tbwg = {
   },
   on:{
     openItem:function(callback){
-      if(typeof callback != 'function'){
+      if(typeof callback == 'function'){
         this.callbacks.openItem = callback;
       }
+      return this;
     },
     closeItem: function(callback){
-      if(typeof callback != 'function'){
+      if(typeof callback == 'function'){
         this.callbacks.closeItem = callback;
       }
+      return this;
     },
     nextItem: function(callback){
-      if(typeof callback != 'function'){
+      if(typeof callback == 'function'){
         this.callbacks.nextItem = callback;
       }
+      return this;
     },
     prevItem: function(callback){
-      if(typeof callback != 'function'){
+      if(typeof callback == 'function'){
         this.callbacks.prevItem = callback;
       }
+      return this;
     },
     gridResize:function(callback){
-      if(typeof callback != 'function'){
+      if(typeof callback == 'function'){
         this.callbacks.gridResize = callback;
       }
+      return this;
     }
   },
   events:{
@@ -119,6 +123,7 @@ var tbwg = {
               }
             });
         }
+        me.events.closeItem.setEvt.apply(me);
         jQuery('.'+me.overlayId).attr('style', '').css({left: '-'+(me.childs.index(jQuery(clicked))*100)+'vw', transition: 'left 0.8s ease-out'}).removeClass('inactive').addClass('active').siblings().addClass('inactive').removeClass('active');
 
         if(me.callbacks.openItem){
@@ -128,23 +133,25 @@ var tbwg = {
     },
     closeItem: {
       setEvt: function(){
-        if(jQuery._data( jQuery("#tbwg-overlay")[0], "events" )){
-          if(typeof this.helper.searchArrayForObj(jQuery._data( jQuery("#tbwg-overlay")[0], "events" ).click, "namespace", "closeItem.tbwg") != 'undefined'){
-            return true; //no Callback will be triggert because there is already a close event on the Close button
-          }
-        }
-        jQuery('#tbwg-overlay').on('click.tbwg.closeItem', '#tbwgClose', { currentInstance: this }, function(event){
+        jQuery('#tbwg-overlay').on('click.tbwg.'+this.overlayId.substr(this.overlayId.length - 8)+'.closeItem', '#tbwgClose', { currentInstance: this }, function(event){
           var me = event.data.currentInstance; //The Object in which the event was triggert
           me.events.closeItem.func(me);
         });
       },
+      rmvEvt: function(){
+        if(jQuery._data( jQuery("#tbwg-overlay")[0], "events" )){
+          if(typeof this.helper.searchArrayForObj(jQuery._data( jQuery("#tbwg-overlay")[0], "events" ).click, "namespace", this.overlayId.substr(this.overlayId.length - 8)) != 'undefined'){
+            jQuery('#tbwg-overlay').off('click.tbwg.'+this.overlayId.substr(this.overlayId.length - 8)+'.closeItem', '#tbwgClose');
+          }
+        }
+      },
       func: function(me){
+        me.events.closeItem.rmvEvt.apply(me);
         jQuery('body').removeClass('tbwg-open no-arrows');
         jQuery('#tbwg-overlay').off('click.currentClose', '.tbwg-dimmer');
         jQuery(document).off('keydown.tbwg');
         if(me.callbacks.closeItem){
-                                    //TODO
-          me.callbacks.closeItem(); //Only the Object which first sets the Event Listener will trigger it's Callback
+          me.callbacks.closeItem();
         }
       }
     },
@@ -333,7 +340,11 @@ var tbwg = {
     },
     searchArrayForObj: function(arr, objKey, objVal){
       return arr.filter(function (obj) {
-        return obj[objKey] === objVal;
+        if(obj[objKey] === objVal || obj[objKey].indexOf(objVal) > -1){
+          return true;
+        } else {
+          return false;
+        }
       })[0];
     }
   },
@@ -358,7 +369,6 @@ var tbwg = {
           } else {
             options.breakpoints[keys[keys.length-1]] = options.gridSize;
           }
-          console.log(options.breakpoints);
         }
         this.options[key] = options[key];
       }
