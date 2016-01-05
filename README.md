@@ -4,7 +4,7 @@ made for you by [the-bauz](http://the-bauz.com)
 
 This example can be found on [the-bauz.com/web-gallery](http://the-bauz.com/web-gallery). Check it out and if you find any bugs feel free to resolve them or open an issue here on GitHub.
 
-You can use this gallery in your personal projects as well as extending this project.
+You can use this gallery in your personal projects as well as extending this project. (for more information about the [LICENSE](LICENSE) read it here on GitHub - it is MIT)
 
 
 ## How to use
