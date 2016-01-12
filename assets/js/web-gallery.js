@@ -20,42 +20,53 @@ var tbwg = {
     prevItem: false,
     gridResize: false
   },
+  allObjects: {},
   lastResize: -1,
   childs: false,
   overlayId: false,
   init: function(selector, options){
+    var currentObj;
+
+    if(typeof this.allObjects[selector] == 'undefined'){
+      currentObj = jQuery.extend(true,{},this); //Clone tbwg Object to instaciate multiple tbwg's on one page
+      this.allObjects[selector] = currentObj;
+    } else {
+      currentObj = this.allObjects[selector];
+    }
+    
+
     if(typeof selector == 'undefined'){
       console.info('To use the Web Gallery from the-bauz you need to pass a CSS Selector');
-      return this;
+      return currentObj;
     } else if(typeof jQuery == 'undefined'){
       console.info('To use the Web Gallery from the-bauz you need implement the jQuery Libary');
-      return this;
+      return currentObj;
     } else if(typeof options != 'undefined' && typeof options != 'object'){
       console.info('The Options for the Web Gallery from the-bauz need to be an Javascript object');
-      return this;
+      return currentObj;
     } else if(typeof options != 'undefined'){
-      this.setSelector.call(this, selector);
-      this.setOptions.call(this, options);
+      currentObj.setSelector.call(currentObj, selector);
+      currentObj.setOptions.call(currentObj, options);
     } else {
-      this.setSelector.call(this, selector);
+      currentObj.setSelector.call(currentObj, selector);
     }
     //SET GRID SIZE VIA CSS
-    if(typeof this.options.gridSize == 'number'){
-      this.setGridSize.call(this, this.options.gridSize);
+    if(typeof currentObj.options.gridSize == 'number'){
+      currentObj.setGridSize.call(currentObj, currentObj.options.gridSize);
     } else {
       //GridSize was not set but the default was overwritten or the type of the gridsize set by the user is not a numer -> invalid
-      this.setGridSize.call(this, 3);
+      currentObj.setGridSize.call(currentObj, 3);
     }
 
-    this.setChilds.apply(this);
-    this.setUp.overlay.apply(this);
-    this.events.openItem.setEvt.apply(this);
-    this.events.prevItem.setEvt.apply(this);
-    this.events.nextItem.setEvt.apply(this);
-    this.events.gridResize.setEvt.apply(this);
+    currentObj.setChilds.apply(currentObj);
+    currentObj.setUp.overlay.apply(currentObj);
+    currentObj.events.openItem.setEvt.apply(currentObj);
+    currentObj.events.prevItem.setEvt.apply(currentObj);
+    currentObj.events.nextItem.setEvt.apply(currentObj);
+    currentObj.events.gridResize.setEvt.apply(currentObj);
 
-    this.events.gridResize.func(this, jQuery(window).width());
-    return this;
+    currentObj.events.gridResize.func(currentObj, jQuery(window).width());
+    return currentObj;
   },
   on:{
     openItem:function(callback){
